@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Task {
     public String text;
 
@@ -12,11 +14,14 @@ public class Task {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Task t && t.text.equals(this.text);
+        if (this == o) return true;
+        if (!(o instanceof Task)) return false;
+        Task task = (Task) o;
+        return Objects.equals(text, task.text);
     }
 
     @Override
     public int hashCode() {
-        return text.hashCode();
+        return Objects.hash(text);
     }
 }

@@ -1,14 +1,12 @@
-NEXT|Brush teeth
-NEXT|Cat food
-NEXT|Cat water
 NEXT|Rabbits
-NEXT|Hoover
 NEXT|Mop
-NEXT|Bathroom
-NEXT|Clothes wash
-NEXT|Drying
 NEXT|Tidy kitchen
-NEXT|Check mail
+NEXT|Check e-mail
 NEXT|Take out trash
-NEXT|Water plants
-NEXT|Pay bills
+NEXT|Bathroom
+NEXT|Hoover
+NEXT|Drying
+NEXT|Cat water
+NEXT|Clothes wash
+NEXT|Cat food
+NEXT|Brush teeth
