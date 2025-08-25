@@ -1,12 +1,8 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Stack;
-import java.util.Calendar;
-import java.io.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
-
+import java.io.*;
+import java.util.*;
 
 public class NowNext extends JFrame {
     private DefaultListModel<Task> forNowModel;
@@ -48,12 +44,14 @@ public class NowNext extends JFrame {
         JButton deleteButton = new JButton("Delete Selected");
         JButton undoButton = new JButton("Undo");
         JButton editDefaultsButton = new JButton("Edit Default Next Tasks");
+        JButton resetButton = new JButton("Reset Now"); // New reset button
 
         inputPanel.add(taskInput);
         inputPanel.add(addButton);
         inputPanel.add(deleteButton);
         inputPanel.add(undoButton);
         inputPanel.add(editDefaultsButton);
+        inputPanel.add(resetButton);
 
         add(inputPanel, BorderLayout.NORTH);
 
@@ -123,8 +121,11 @@ public class NowNext extends JFrame {
         undoButton.addActionListener(e -> undo());
         editDefaultsButton.addActionListener(e -> openDefaultNextEditor());
 
-        // Schedule midnight reset
-        scheduleMidnightReset();
+        resetButton.addActionListener(e -> {
+            saveStateForUndo();
+            resetLists();
+            JOptionPane.showMessageDialog(this, "Now list has been reset.");
+        });
 
         setVisible(true);
     }
@@ -163,7 +164,7 @@ public class NowNext extends JFrame {
                     String droppedText = (String) support.getTransferable()
                             .getTransferData(DataFlavor.stringFlavor);
 
-                    saveStateForUndo(); // Save before change
+                    saveStateForUndo();
 
                     Task draggedTask = null;
                     DefaultListModel<Task>[] models = new DefaultListModel[]{forNowModel, nextModel, futureModel};
@@ -257,35 +258,17 @@ public class NowNext extends JFrame {
         }
     }
 
-    private void scheduleMidnightReset() {
-        java.util.Timer timer = new java.util.Timer(true);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        long delay = calendar.getTimeInMillis() - System.currentTimeMillis();
-        long period = 24 * 60 * 60 * 1000;
-
-        timer.scheduleAtFixedRate(new java.util.TimerTask() {
-            @Override
-            public void run() { SwingUtilities.invokeLater(NowNext.this::resetLists); }
-        }, delay, period);
-    }
-
     private void resetLists() {
+        // Move Now -> Next
         for (int i = 0; i < forNowModel.getSize(); i++) {
             Task t = forNowModel.get(i);
             if (!nextModel.contains(t)) nextModel.addElement(t);
         }
         forNowModel.clear();
 
+        // Add default Next tasks if missing
         for (String text : defaultNextTasks) {
-            if (!containsTask(nextModel, text)) {
-                nextModel.addElement(new Task(text));
-            }
+            if (!containsTask(nextModel, text)) nextModel.addElement(new Task(text));
         }
 
         saveTasksToFile();

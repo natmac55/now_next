@@ -1,4 +1,6 @@
-NEXT|Rabbits
+NOW|Rabbits
+NOW|Cat water
+NOW|Brush teeth
 NEXT|Mop
 NEXT|Tidy kitchen
 NEXT|Check e-mail
@@ -6,7 +8,8 @@ NEXT|Take out trash
 NEXT|Bathroom
 NEXT|Hoover
 NEXT|Drying
-NEXT|Cat water
 NEXT|Clothes wash
 NEXT|Cat food
-NEXT|Brush teeth
+NEXT|Pots
+NEXT|Interview Clothes
+FUTURE|Interview - 1200 Asda
