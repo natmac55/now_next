@@ -1,1 +1,14 @@
-NEXT|This task
+NEXT|Brush teeth
+NEXT|Cat food
+NEXT|Cat water
+NEXT|Rabbits
+NEXT|Hoover
+NEXT|Mop
+NEXT|Bathroom
+NEXT|Clothes wash
+NEXT|Drying
+NEXT|Tidy kitchen
+NEXT|Check mail
+NEXT|Take out trash
+NEXT|Water plants
+NEXT|Pay bills
