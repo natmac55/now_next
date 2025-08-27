@@ -1,15 +1,12 @@
-NOW|Rabbits
-NOW|Cat water
-NOW|Brush teeth
+NOW|Pots
+NOW|Cat food
 NEXT|Mop
-NEXT|Tidy kitchen
-NEXT|Check e-mail
-NEXT|Take out trash
-NEXT|Bathroom
-NEXT|Hoover
+NEXT|Sort Kitchen Corner
 NEXT|Drying
-NEXT|Clothes wash
-NEXT|Cat food
-NEXT|Pots
-NEXT|Interview Clothes
-FUTURE|Interview - 1200 Asda
+NEXT|Hoover
+NEXT|Bathroom
+NEXT|Tidy kitchen
+FUTURE|Cats 28th august 1015
+FUTURE|Wegovy
+FUTURE|BAE
+FUTURE|Ash Asda
