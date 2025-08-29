@@ -1,12 +1,20 @@
 NOW|Pots
+NOW|Add code
 NOW|Cat food
-NEXT|Mop
-NEXT|Sort Kitchen Corner
-NEXT|Drying
+NEXT|Rabbits
 NEXT|Hoover
+NEXT|Mop
 NEXT|Bathroom
+NEXT|Clothes wash
+NEXT|Drying
 NEXT|Tidy kitchen
-FUTURE|Cats 28th august 1015
+NEXT|Stevie Bed
+NEXT|Stevie Drawers
+NEXT|Cue
+NEXT|UC
+NEXT|Food Prep
 FUTURE|Wegovy
 FUTURE|BAE
-FUTURE|Ash Asda
+FUTURE|Add future button
+FUTURE|Add edit button
+FUTURE|Prevent full reset

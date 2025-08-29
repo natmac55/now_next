@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -79,7 +81,25 @@ public class NowNext extends JFrame {
 
         add(listsPanel, BorderLayout.CENTER);
 
+
+
         // Button actions
+
+        taskInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = taskInput.getText().trim();
+                if (!text.isEmpty() && !containsTask(nextModel, text)) {
+                    Task newTask = new Task(text);
+                    nextModel.addElement(newTask);
+                    taskInput.setText("");
+                    saveTasksToFile();
+                    undoStack.push(() -> nextModel.removeElement(newTask));
+                }
+            }
+        });
+
+
         addButton.addActionListener(e -> {
             String text = taskInput.getText().trim();
             if (!text.isEmpty() && !containsTask(nextModel, text)) {
