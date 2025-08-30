@@ -1,6 +1,6 @@
-NOW|Pots
-NOW|Add code
-NOW|Cat food
+NEXT|Brush teeth
+NEXT|Cat food
+NEXT|Cat water
 NEXT|Rabbits
 NEXT|Hoover
 NEXT|Mop
@@ -8,13 +8,15 @@ NEXT|Bathroom
 NEXT|Clothes wash
 NEXT|Drying
 NEXT|Tidy kitchen
-NEXT|Stevie Bed
-NEXT|Stevie Drawers
-NEXT|Cue
-NEXT|UC
-NEXT|Food Prep
+NEXT|Check e-mail
+NEXT|Take out trash
+NEXT|Pots
+NEXT|The Dles
+NEXT|Meds
+NEXT|Stevie Hair
+NEXT|Stevie Teeth
 FUTURE|Wegovy
-FUTURE|BAE
-FUTURE|Add future button
 FUTURE|Add edit button
 FUTURE|Prevent full reset
+FUTURE|Card - zable 500
+FUTURE|card mbna 1552.35

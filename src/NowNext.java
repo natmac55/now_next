@@ -33,6 +33,7 @@ public class NowNext extends JFrame {
         JPanel inputPanel = new JPanel();
         JTextField taskInput = new JTextField(20);
         JButton addButton = new JButton("Add to Next");
+        JButton addFuture = new JButton("Add to Future");
         JButton deleteButton = new JButton("Delete Selected");
         JButton undoButton = new JButton("Undo");
         JButton resetButton = new JButton("Reset");
@@ -40,6 +41,7 @@ public class NowNext extends JFrame {
 
         inputPanel.add(taskInput);
         inputPanel.add(addButton);
+        inputPanel.add(addFuture);
         inputPanel.add(deleteButton);
         inputPanel.add(undoButton);
         inputPanel.add(resetButton);
@@ -99,12 +101,22 @@ public class NowNext extends JFrame {
             }
         });
 
-
         addButton.addActionListener(e -> {
             String text = taskInput.getText().trim();
             if (!text.isEmpty() && !containsTask(nextModel, text)) {
                 Task newTask = new Task(text);
                 nextModel.addElement(newTask);
+                taskInput.setText("");
+                saveTasksToFile();
+                undoStack.push(() -> nextModel.removeElement(newTask));
+            }
+        });
+
+        addFuture.addActionListener(e -> {
+            String text = taskInput.getText().trim();
+            if (!text.isEmpty() && !containsTask(futureModel, text)) {
+                Task newTask = new Task(text);
+                futureModel.addElement(newTask);
                 taskInput.setText("");
                 saveTasksToFile();
                 undoStack.push(() -> nextModel.removeElement(newTask));
@@ -258,12 +270,23 @@ public class NowNext extends JFrame {
 
     // Reset button logic
     private void resetLists() {
-        forNowModel.clear();
         nextModel.clear();
 
+        // Add default tasks
         for (String text : defaultNextTasks) {
             nextModel.addElement(new Task(text));
         }
+
+        // Add any extra tasks from forNowModel that aren't defaults
+        for (int i = 0; i < forNowModel.size(); i++) {
+            Task task = forNowModel.getElementAt(i);
+            if (!defaultNextTasks.contains(task.getText())) {
+                nextModel.addElement(task);
+            }
+        }
+
+        // Clear forNow list
+        forNowModel.clear();
 
         saveTasksToFile();
     }
