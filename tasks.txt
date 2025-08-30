@@ -17,6 +17,5 @@ NEXT|Stevie Hair
 NEXT|Stevie Teeth
 FUTURE|Wegovy
 FUTURE|Add edit button
-FUTURE|Prevent full reset
 FUTURE|Card - zable 500
 FUTURE|card mbna 1552.35

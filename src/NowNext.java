@@ -35,7 +35,7 @@ public class NowNext extends JFrame {
         JButton addButton = new JButton("Add to Next");
         JButton addFuture = new JButton("Add to Future");
         JButton deleteButton = new JButton("Delete Selected");
-        JButton undoButton = new JButton("Undo");
+        // JButton undoButton = new JButton("Undo");
         JButton resetButton = new JButton("Reset");
         JButton editDefaultsButton = new JButton("Edit Defaults");
 
@@ -43,7 +43,7 @@ public class NowNext extends JFrame {
         inputPanel.add(addButton);
         inputPanel.add(addFuture);
         inputPanel.add(deleteButton);
-        inputPanel.add(undoButton);
+        // inputPanel.add(undoButton);
         inputPanel.add(resetButton);
         inputPanel.add(editDefaultsButton);
         add(inputPanel, BorderLayout.NORTH);
@@ -136,12 +136,15 @@ public class NowNext extends JFrame {
             }
         });
 
+        /*
         undoButton.addActionListener(e -> {
             if (!undoStack.isEmpty()) {
                 undoStack.pop().run();
                 saveTasksToFile();
             }
         });
+        */
+
 
         resetButton.addActionListener(e -> resetLists());
 
