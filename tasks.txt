@@ -1,12 +1,11 @@
-NOW|add daily variables
 NEXT|Uc
 NEXT|Give everyone charger
 NEXT|toaster
 NEXT|Flea stuff
 FUTURE|Card - zable 500
-FUTURE|Reorder lists
 FUTURE|card mbna 1552.35
 FUTURE|wegovy
-FUTURE|add standalone
 FUTURE|more drawers
 FUTURE|stevie owed 100
+FUTURE|Sort out alphabetical order for weekly jobs edit
+FUTURE|Bad omens - find date!

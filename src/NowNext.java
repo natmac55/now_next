@@ -7,8 +7,8 @@ import java.io.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.DayOfWeek;
 
 public class NowNext extends JFrame {
     private DefaultListModel<Task> forNowModel;
@@ -19,19 +19,18 @@ public class NowNext extends JFrame {
     private static final String DEFAULTS_FILE = "default_tasks.txt";
     private static final String WEEKLY_FILE = "weekly_tasks.txt";
 
-    private List<String> defaultNextTasks;
-    private List<WeeklyTask> weeklyTasks;
-
+    private List<String> defaultNextTasks; // loaded from file or fallback
+    private List<WeeklyTask> weeklyTasks = new ArrayList<>();
     private Stack<Runnable> undoStack = new Stack<>();
 
     public NowNext() {
         super("Now / Next / Future");
 
-        setSize(900, 400);
+        setSize(1000, 500);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Load defaults and weekly jobs
+        // Load defaults and weekly tasks
         loadDefaultTasks();
         loadWeeklyTasks();
 
@@ -43,6 +42,7 @@ public class NowNext extends JFrame {
         JButton deleteButton = new JButton("Delete Selected");
         JButton resetButton = new JButton("Reset");
         JButton editDefaultsButton = new JButton("Edit Defaults");
+        JButton editWeeklyButton = new JButton("Edit Weekly Tasks");
 
         inputPanel.add(taskInput);
         inputPanel.add(addButton);
@@ -50,6 +50,7 @@ public class NowNext extends JFrame {
         inputPanel.add(deleteButton);
         inputPanel.add(resetButton);
         inputPanel.add(editDefaultsButton);
+        inputPanel.add(editWeeklyButton);
         add(inputPanel, BorderLayout.NORTH);
 
         // Models and lists
@@ -57,12 +58,11 @@ public class NowNext extends JFrame {
         nextModel = new DefaultListModel<>();
         futureModel = new DefaultListModel<>();
 
-        // Lists
         JList<Task> forNowList = new JList<>(forNowModel);
         JList<Task> nextList = new JList<>(nextModel);
         JList<Task> futureList = new JList<>(futureModel);
 
-        // ✅ Allow Ctrl+Click to deselect
+        // Standard selection (Ctrl+Click to deselect)
         forNowList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         nextList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         futureList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -71,7 +71,6 @@ public class NowNext extends JFrame {
         enableDragAndDrop(nextList);
         enableDragAndDrop(futureList);
 
-        // Labels + lists in panels
         JPanel listsPanel = new JPanel(new GridLayout(1, 3));
 
         JPanel nowPanel = new JPanel(new BorderLayout());
@@ -93,30 +92,8 @@ public class NowNext extends JFrame {
         add(listsPanel, BorderLayout.CENTER);
 
         // Button actions
-        taskInput.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String text = taskInput.getText().trim();
-                if (!text.isEmpty() && !containsTask(nextModel, text)) {
-                    Task newTask = new Task(text);
-                    nextModel.addElement(newTask);
-                    taskInput.setText("");
-                    saveTasksToFile();
-                    undoStack.push(() -> nextModel.removeElement(newTask));
-                }
-            }
-        });
-
-        addButton.addActionListener(e -> {
-            String text = taskInput.getText().trim();
-            if (!text.isEmpty() && !containsTask(nextModel, text)) {
-                Task newTask = new Task(text);
-                nextModel.addElement(newTask);
-                taskInput.setText("");
-                saveTasksToFile();
-                undoStack.push(() -> nextModel.removeElement(newTask));
-            }
-        });
+        taskInput.addActionListener(e -> addToNext(taskInput));
+        addButton.addActionListener(e -> addToNext(taskInput));
 
         addFuture.addActionListener(e -> {
             String text = taskInput.getText().trim();
@@ -125,7 +102,7 @@ public class NowNext extends JFrame {
                 futureModel.addElement(newTask);
                 taskInput.setText("");
                 saveTasksToFile();
-                undoStack.push(() -> nextModel.removeElement(newTask));
+                undoStack.push(() -> futureModel.removeElement(newTask));
             }
         });
 
@@ -143,13 +120,24 @@ public class NowNext extends JFrame {
         });
 
         resetButton.addActionListener(e -> resetLists());
-
         editDefaultsButton.addActionListener(e -> editDefaultTasks());
+        editWeeklyButton.addActionListener(e -> editWeeklyTasks());
 
         // Load previous tasks
         loadTasksFromFile();
 
         setVisible(true);
+    }
+
+    private void addToNext(JTextField taskInput) {
+        String text = taskInput.getText().trim();
+        if (!text.isEmpty() && !containsTask(nextModel, text)) {
+            Task newTask = new Task(text);
+            nextModel.addElement(newTask);
+            taskInput.setText("");
+            saveTasksToFile();
+            undoStack.push(() -> nextModel.removeElement(newTask));
+        }
     }
 
     private boolean containsTask(DefaultListModel<Task> model, String text) {
@@ -190,7 +178,8 @@ public class NowNext extends JFrame {
                     String droppedText = (String) support.getTransferable()
                             .getTransferData(DataFlavor.stringFlavor);
 
-                    DefaultListModel<Task> targetModel = (DefaultListModel<Task>) ((JList<?>) support.getComponent()).getModel();
+                    DefaultListModel<Task> targetModel =
+                            (DefaultListModel<Task>) ((JList<?>) support.getComponent()).getModel();
                     if (!containsTask(targetModel, droppedText)) {
                         if (index < 0 || index > targetModel.getSize()) {
                             targetModel.addElement(new Task(droppedText));
@@ -199,7 +188,8 @@ public class NowNext extends JFrame {
                         }
                     }
 
-                    DefaultListModel<Task>[] models = new DefaultListModel[]{forNowModel, nextModel, futureModel};
+                    DefaultListModel<Task>[] models =
+                            new DefaultListModel[]{forNowModel, nextModel, futureModel};
                     for (DefaultListModel<Task> m : models) {
                         if (m != targetModel) {
                             for (int i = 0; i < m.getSize(); i++) {
@@ -288,7 +278,7 @@ public class NowNext extends JFrame {
         forNowModel.clear();
 
         // ✅ Add today's weekly tasks
-        String today = LocalDate.now().getDayOfWeek().name(); // e.g. "MONDAY"
+        String today = LocalDate.now().getDayOfWeek().name(); // MONDAY, etc.
         for (WeeklyTask wt : weeklyTasks) {
             if (wt.getDay().equalsIgnoreCase(today)) {
                 if (!containsTask(nextModel, wt.getText())) {
@@ -300,7 +290,7 @@ public class NowNext extends JFrame {
         saveTasksToFile();
     }
 
-    // Load defaults from file or use fallback
+    // Load defaults from file or fallback
     private void loadDefaultTasks() {
         File file = new File(DEFAULTS_FILE);
         defaultNextTasks = new ArrayList<>();
@@ -334,30 +324,22 @@ public class NowNext extends JFrame {
         }
     }
 
-    // Load weekly tasks from file or fallback
+    // Load weekly tasks
     private void loadWeeklyTasks() {
-        weeklyTasks = new ArrayList<>();
+        weeklyTasks.clear();
         File file = new File(WEEKLY_FILE);
-
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split("\\|", 2);
                     if (parts.length == 2) {
-                        weeklyTasks.add(new WeeklyTask(parts[1].trim(), parts[0].trim()));
+                        weeklyTasks.add(new WeeklyTask(parts[1], parts[0]));
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        if (weeklyTasks.isEmpty()) {
-            // fallback examples
-            weeklyTasks.add(new WeeklyTask("Take out bins", "MONDAY"));
-            weeklyTasks.add(new WeeklyTask("Vacuum living room", "WEDNESDAY"));
-            weeklyTasks.add(new WeeklyTask("Water plants", "FRIDAY"));
         }
     }
 
@@ -407,6 +389,76 @@ public class NowNext extends JFrame {
             try (PrintWriter writer = new PrintWriter(new FileWriter(DEFAULTS_FILE))) {
                 for (String task : defaultNextTasks) {
                     writer.println(task);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            dialog.dispose();
+        });
+
+        dialog.setVisible(true);
+    }
+
+    // Pop-out editor for weekly tasks
+    private void editWeeklyTasks() {
+        JDialog dialog = new JDialog(this, "Edit Weekly Tasks", true);
+        dialog.setSize(500, 400);
+        dialog.setLayout(new BorderLayout());
+
+        DefaultListModel<WeeklyTask> model = new DefaultListModel<>();
+        for (WeeklyTask task : weeklyTasks) {
+            model.addElement(task);
+        }
+
+        JList<WeeklyTask> list = new JList<>(model);
+        dialog.add(new JScrollPane(list), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        JButton addBtn = new JButton("Add");
+        JButton removeBtn = new JButton("Remove");
+        JButton saveBtn = new JButton("Save");
+
+        buttonPanel.add(addBtn);
+        buttonPanel.add(removeBtn);
+        buttonPanel.add(saveBtn);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        addBtn.addActionListener(e -> {
+            String[] days = {"MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"};
+            JComboBox<String> dayBox = new JComboBox<>(days);
+            JTextField taskField = new JTextField(20);
+
+            JPanel inputPanel = new JPanel();
+            inputPanel.add(new JLabel("Day:"));
+            inputPanel.add(dayBox);
+            inputPanel.add(new JLabel("Task:"));
+            inputPanel.add(taskField);
+
+            int result = JOptionPane.showConfirmDialog(dialog, inputPanel, "Add Weekly Task", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                String taskText = taskField.getText().trim();
+                String selectedDay = (String) dayBox.getSelectedItem();
+                if (!taskText.isEmpty()) {
+                    model.addElement(new WeeklyTask(taskText, selectedDay));
+                }
+            }
+        });
+
+        removeBtn.addActionListener(e -> {
+            WeeklyTask selected = list.getSelectedValue();
+            if (selected != null) {
+                model.removeElement(selected);
+            }
+        });
+
+        saveBtn.addActionListener(e -> {
+            weeklyTasks.clear();
+            for (int i = 0; i < model.size(); i++) {
+                weeklyTasks.add(model.get(i));
+            }
+            try (PrintWriter writer = new PrintWriter(new FileWriter(WEEKLY_FILE))) {
+                for (WeeklyTask task : weeklyTasks) {
+                    writer.println(task.getDay() + "|" + task.getText());
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
