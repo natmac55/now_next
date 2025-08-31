@@ -1,23 +1,12 @@
-NOW|Cat food
-NOW|Cat water
-NOW|Rabbits
-NEXT|Hoover
-NEXT|Mop
-NEXT|Bathroom
-NEXT|Clothes wash
-NEXT|Drying
-NEXT|Tidy kitchen
-NEXT|Check e-mail
-NEXT|Take out trash
-NEXT|Pots
-NEXT|The Dles
+NOW|add daily variables
+NEXT|Uc
 NEXT|Give everyone charger
-NEXT|Clothing away
-NEXT|reset bathroom
+NEXT|toaster
+NEXT|Flea stuff
 FUTURE|Card - zable 500
 FUTURE|Reorder lists
 FUTURE|card mbna 1552.35
-FUTURE|add daily reset variables
 FUTURE|wegovy
 FUTURE|add standalone
-FUTURE|and deselect highlight
+FUTURE|more drawers
+FUTURE|stevie owed 100
