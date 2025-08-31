@@ -273,11 +273,13 @@ public class NowNext extends JFrame {
 
     // Reset button logic
     private void resetLists() {
-        nextModel.clear();
+
 
         // Add default tasks
         for (String text : defaultNextTasks) {
-            nextModel.addElement(new Task(text));
+            if (!nextModel.contains(text)) {
+                nextModel.addElement(new Task(text));
+            }
         }
 
         // Add any extra tasks from forNowModel that aren't defaults

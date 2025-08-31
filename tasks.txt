@@ -1,7 +1,6 @@
-NEXT|Brush teeth
-NEXT|Cat food
-NEXT|Cat water
-NEXT|Rabbits
+NOW|Cat food
+NOW|Cat water
+NOW|Rabbits
 NEXT|Hoover
 NEXT|Mop
 NEXT|Bathroom
@@ -12,10 +11,13 @@ NEXT|Check e-mail
 NEXT|Take out trash
 NEXT|Pots
 NEXT|The Dles
-NEXT|Meds
-NEXT|Stevie Hair
-NEXT|Stevie Teeth
-FUTURE|Wegovy
-FUTURE|Add edit button
+NEXT|Give everyone charger
+NEXT|Clothing away
+NEXT|reset bathroom
 FUTURE|Card - zable 500
+FUTURE|Reorder lists
 FUTURE|card mbna 1552.35
+FUTURE|add daily reset variables
+FUTURE|wegovy
+FUTURE|add standalone
+FUTURE|and deselect highlight
