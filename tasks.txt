@@ -1,7 +1,24 @@
+NOW|Cat water
+NOW|Brush teeth
+NOW|council
 NEXT|Uc
-NEXT|Give everyone charger
 NEXT|toaster
 NEXT|Flea stuff
+NEXT|Rabbits
+NEXT|Hoover
+NEXT|Mop
+NEXT|Bathroom
+NEXT|Clothes wash
+NEXT|Drying
+NEXT|Tidy kitchen
+NEXT|Take out trash
+NEXT|Pots
+NEXT|The Dles
+NEXT|Stevie Hair
+NEXT|Stevie Teeth
+NEXT|Living Room
+NEXT|Stevie Bath
+NEXT|ADd monthly
 FUTURE|Card - zable 500
 FUTURE|card mbna 1552.35
 FUTURE|wegovy
@@ -9,3 +26,4 @@ FUTURE|more drawers
 FUTURE|stevie owed 100
 FUTURE|Sort out alphabetical order for weekly jobs edit
 FUTURE|Bad omens - find date!
+FUTURE|council 9 - 12 wednesday

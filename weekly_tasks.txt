@@ -1,1 +1,5 @@
 TUESDAY|Bins
+MONDAY|Stevie Bath
+WEDNESDAY|Stevie Bath
+FRIDAY|Stevie Bath
+SUNDAY|Stevie Bath
