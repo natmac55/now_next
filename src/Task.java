@@ -7,6 +7,10 @@ public class Task {
         this.text = text;
     }
 
+    public Task() {
+
+    }
+
     @Override
     public String toString() {
         return text;

@@ -1,10 +1,11 @@
 import java.time.LocalDate;
 
-public class MonthlyTask {
+public class MonthlyTask extends Task {
     private String text;
     private LocalDate date;
 
     public MonthlyTask(String text, LocalDate date) {
+        super();
         this.text = text;
         this.date = date;
     }

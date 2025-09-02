@@ -435,7 +435,10 @@ public class NowNext extends JFrame {
                 String text = taskField.getText().trim();
                 try {
                     LocalDate date = LocalDate.of((int)year.getValue(), (int)month.getValue(), (int)day.getValue());
-                    if (!text.isEmpty()) model.addElement(new MonthlyTask(text, date));
+                    if (!text.isEmpty()) {
+                        model.addElement(new MonthlyTask(text, date));
+                        futureModel.addElement(new MonthlyTask(text, date));
+                    }
                 } catch (Exception ex) { JOptionPane.showMessageDialog(dialog, "Invalid date!"); }
             }
         });
