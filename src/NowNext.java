@@ -248,11 +248,25 @@ public class NowNext extends JFrame {
             if (wt.getDay().equalsIgnoreCase(today) && !containsTask(nextModel, wt.getText()))
                 nextModel.addElement(new Task(wt.getText()));
 
-        // Monthly tasks
         LocalDate todayDate = LocalDate.now();
-        for (MonthlyTask mt : monthlyTasks)
-            if (mt.getDate().equals(todayDate) && !containsTask(nextModel, mt.getText()))
+
+        // Monthly Tasks
+        for (MonthlyTask mt : monthlyTasks) {
+            LocalDate taskDate = mt.getDate();
+
+            // Case 1: exact full match (year, month, day)
+            if (taskDate.equals(todayDate) && !containsTask(nextModel, mt.getText())) {
                 nextModel.addElement(new Task(mt.getText()));
+            }
+
+            // Case 2: "every month" tasks -> year = 0 means month acts as "0"
+            if (taskDate.getYear() == 0 && taskDate.getDayOfMonth() == todayDate.getDayOfMonth()) {
+                if (!containsTask(nextModel, mt.getText())) {
+                    nextModel.addElement(new Task(mt.getText()));
+                }
+            }
+        }
+
 
         saveTasksToFile();
     }
@@ -407,7 +421,7 @@ public class NowNext extends JFrame {
 
         add.addActionListener(e -> {
             JSpinner year = new JSpinner(new SpinnerNumberModel(LocalDate.now().getYear(), 2000, 2100, 1));
-            JSpinner month = new JSpinner(new SpinnerNumberModel(LocalDate.now().getMonthValue(), 1, 12, 1));
+            JSpinner month = new JSpinner(new SpinnerNumberModel(LocalDate.now().getMonthValue(), 0, 12, 1));
             JSpinner day = new JSpinner(new SpinnerNumberModel(LocalDate.now().getDayOfMonth(), 1, 31, 1));
             JTextField taskField = new JTextField(20);
             JPanel input = new JPanel();
