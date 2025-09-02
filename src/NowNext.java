@@ -28,7 +28,7 @@ public class NowNext extends JFrame {
 
     public NowNext() {
         super("Now / Next / Future");
-        setSize(1100, 500);
+        setSize(1400, 500);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -46,6 +46,7 @@ public class NowNext extends JFrame {
         JButton editDefaultsButton = new JButton("Edit Defaults");
         JButton editWeeklyButton = new JButton("Edit Weekly Tasks");
         JButton editMonthlyButton = new JButton("Edit Monthly Tasks");
+        JButton editTask = new JButton("Edit Task");
 
         inputPanel.add(taskInput);
         inputPanel.add(addButton);
@@ -55,6 +56,7 @@ public class NowNext extends JFrame {
         inputPanel.add(editDefaultsButton);
         inputPanel.add(editWeeklyButton);
         inputPanel.add(editMonthlyButton);
+        inputPanel.add(editTask);
         add(inputPanel, BorderLayout.NORTH);
 
         // Lists
@@ -106,6 +108,21 @@ public class NowNext extends JFrame {
                     undoStack.push(() -> model.addElement(selected));
                 }
             }
+        });
+
+        editTask.addActionListener(e ->  {
+            JList<Task>[] lists = new JList[]{forNowList, nextList, futureList};
+            for (JList<Task> list : lists) {
+                Task selected = list.getSelectedValue();
+                if (selected != null) {
+                    taskInput.setText(String.valueOf(selected));
+                    DefaultListModel<Task> model = (DefaultListModel<Task>) list.getModel();
+                    model.removeElement(selected);
+                    saveTasksToFile();
+                    undoStack.push(() -> model.addElement(selected));
+                }
+            }
+
         });
 
         resetButton.addActionListener(e -> resetLists());
