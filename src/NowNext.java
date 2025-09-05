@@ -18,10 +18,12 @@ public class NowNext extends JFrame {
 
     private static final String FILE_NAME = "tasks.txt";
     private static final String DEFAULTS_FILE = "default_tasks.txt";
+    private static final String WORKDAY_FILE = "workday_tasks.txt";
     private static final String WEEKLY_FILE = "weekly_tasks.txt";
     private static final String MONTHLY_FILE = "monthly_tasks.txt";
 
     private List<String> defaultNextTasks;
+    private List<String> defaultWorkdayTasks;
     private List<WeeklyTask> weeklyTasks = new ArrayList<>();
     private List<MonthlyTask> monthlyTasks = new ArrayList<>();
     private Stack<Runnable> undoStack = new Stack<>();
@@ -33,6 +35,7 @@ public class NowNext extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         loadDefaultTasks();
+        loadWorkdayTasks();
         loadWeeklyTasks();
         loadMonthlyTasks();
 
@@ -43,7 +46,9 @@ public class NowNext extends JFrame {
         JButton addFuture = new JButton("Add to Future");
         JButton deleteButton = new JButton("Delete Selected");
         JButton resetButton = new JButton("Reset");
+        JButton workdayButton = new JButton("Workday");
         JButton editDefaultsButton = new JButton("Edit Defaults");
+        JButton editWorkdayButton = new JButton("Edit Workday");
         JButton editWeeklyButton = new JButton("Edit Weekly Tasks");
         JButton editMonthlyButton = new JButton("Edit Monthly Tasks");
         JButton editTask = new JButton("Edit Task");
@@ -53,7 +58,9 @@ public class NowNext extends JFrame {
         inputPanel.add(addFuture);
         inputPanel.add(deleteButton);
         inputPanel.add(resetButton);
+        inputPanel.add(workdayButton);
         inputPanel.add(editDefaultsButton);
+        inputPanel.add(editWorkdayButton);
         inputPanel.add(editWeeklyButton);
         inputPanel.add(editMonthlyButton);
         inputPanel.add(editTask);
@@ -126,7 +133,9 @@ public class NowNext extends JFrame {
         });
 
         resetButton.addActionListener(e -> resetLists());
+        workdayButton.addActionListener(e -> resetListsWorkday());
         editDefaultsButton.addActionListener(e -> editDefaultTasks());
+        editWorkdayButton.addActionListener(e -> editWorkdayTasks());
         editWeeklyButton.addActionListener(e -> editWeeklyTasks());
         editMonthlyButton.addActionListener(e -> editMonthlyTasks());
 
@@ -271,6 +280,44 @@ public class NowNext extends JFrame {
         saveTasksToFile();
     }
 
+    private void resetListsWorkday() {
+        for (String text : defaultWorkdayTasks)
+            if (!containsTask(nextModel, text)) nextModel.addElement(new Task(text));
+
+        for (int i = 0; i < forNowModel.size(); i++) {
+            Task t = forNowModel.get(i);
+            if (!defaultWorkdayTasks.contains(t.getText())) nextModel.addElement(t);
+        }
+
+        // Weekly tasks
+        String today = LocalDate.now().getDayOfWeek().name();
+        for (WeeklyTask wt : weeklyTasks)
+            if (wt.getDay().equalsIgnoreCase(today) && !containsTask(nextModel, wt.getText()))
+                nextModel.addElement(new Task(wt.getText()));
+
+        LocalDate todayDate = LocalDate.now();
+
+        // Monthly Tasks
+        for (MonthlyTask mt : monthlyTasks) {
+            LocalDate taskDate = mt.getDate();
+
+            // Case 1: exact full match (year, month, day)
+            if (taskDate.equals(todayDate) && !containsTask(nextModel, mt.getText())) {
+                nextModel.addElement(new Task(mt.getText()));
+            }
+
+            // Case 2: "every month" tasks -> year = 0 means month acts as "0"
+            if (taskDate.getYear() == 0 && taskDate.getDayOfMonth() == todayDate.getDayOfMonth()) {
+                if (!containsTask(nextModel, mt.getText())) {
+                    nextModel.addElement(new Task(mt.getText()));
+                }
+            }
+        }
+
+
+        saveTasksToFile();
+    }
+
     private void loadDefaultTasks() {
         defaultNextTasks = new ArrayList<>();
         File file = new File(DEFAULTS_FILE);
@@ -284,6 +331,21 @@ public class NowNext extends JFrame {
         if (defaultNextTasks.isEmpty()) defaultNextTasks = new ArrayList<>(List.of(
                 "Brush teeth","Cat food","Cat water","Rabbits","Hoover","Mop","Bathroom",
                 "Clothes wash","Drying","Tidy kitchen","Check e-mail","Take out trash"
+        ));
+    }
+
+    private void loadWorkdayTasks() {
+        defaultWorkdayTasks = new ArrayList<>();
+        File file = new File(WORKDAY_FILE);
+        if (file.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = reader.readLine()) != null) defaultWorkdayTasks.add(line.trim());
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+
+        if (defaultWorkdayTasks.isEmpty()) defaultWorkdayTasks = new ArrayList<>(List.of(
+                "Brush teeth"
         ));
     }
 
@@ -359,6 +421,40 @@ public class NowNext extends JFrame {
         dialog.setVisible(true);
     }
 
+    private void editWorkdayTasks() {
+        JDialog dialog = new JDialog(this, "Edit Workday Tasks", true);
+        dialog.setSize(400, 400);
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (String t : defaultWorkdayTasks) model.addElement(t);
+
+        JList<String> list = new JList<>(model);
+        dialog.add(new JScrollPane(list), BorderLayout.CENTER);
+
+        JPanel panel = new JPanel();
+        JButton add = new JButton("Add"), remove = new JButton("Remove"), save = new JButton("Save");
+        panel.add(add); panel.add(remove); panel.add(save);
+        dialog.add(panel, BorderLayout.SOUTH);
+
+        add.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog(dialog, "New Task:");
+            if (input != null && !input.trim().isEmpty()) model.addElement(input.trim());
+        });
+        remove.addActionListener(e -> {
+            String selected = list.getSelectedValue();
+            if (selected != null) model.removeElement(selected);
+        });
+        save.addActionListener(e -> {
+            defaultWorkdayTasks.clear();
+            for (int i = 0; i < model.size(); i++) defaultWorkdayTasks.add(model.get(i));
+            try (PrintWriter writer = new PrintWriter(new FileWriter(WORKDAY_FILE))) {
+                for (String t : defaultWorkdayTasks) writer.println(t);
+            } catch (IOException ex) { ex.printStackTrace(); }
+            dialog.dispose();
+        });
+
+        dialog.setVisible(true);
+    }
+
     private void editWeeklyTasks() {
         JDialog dialog = new JDialog(this, "Edit Weekly Tasks", true);
         dialog.setSize(500, 400);
@@ -420,7 +516,7 @@ public class NowNext extends JFrame {
         dialog.add(panel, BorderLayout.SOUTH);
 
         add.addActionListener(e -> {
-            JSpinner year = new JSpinner(new SpinnerNumberModel(LocalDate.now().getYear(), 2000, 2100, 1));
+            JSpinner year = new JSpinner(new SpinnerNumberModel(LocalDate.now().getYear(), 0, 2100, 1));
             JSpinner month = new JSpinner(new SpinnerNumberModel(LocalDate.now().getMonthValue(), 0, 12, 1));
             JSpinner day = new JSpinner(new SpinnerNumberModel(LocalDate.now().getDayOfMonth(), 1, 31, 1));
             JTextField taskField = new JTextField(20);

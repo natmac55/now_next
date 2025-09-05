@@ -1,16 +1,10 @@
-NEXT|Uc
-NEXT|Rabbits
-NEXT|Hoover
-NEXT|Mop
-NEXT|Bathroom
-NEXT|Drying
+NEXT|Beard
+NEXT|Asda route
+NEXT|cat app on phone
+NEXT|Brush teeth
 NEXT|Stevie Bath
-NEXT|Living Room
-NEXT|Fridge
-NEXT|Place new table
+NEXT|Task
 FUTURE|Card - zable 500
 FUTURE|card mbna 1552.35
 FUTURE|more drawers
 FUTURE|stevie owed 100
-FUTURE|BAD OMENS 23rd November
-FUTURE|Try mounjaro via gp
